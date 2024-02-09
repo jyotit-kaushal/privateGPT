@@ -143,6 +143,13 @@ class PrivateGptUi:
                     for index, source in enumerate(sources, start=1)
                 )
 
+    def _delete_document(self, document_name: str) -> None:
+        try:
+            # Call the wipe function from utils.py
+            wipe(document_name)
+        except Exception as e:
+            logger.error(f"Error deleting document '{document_name}': {str(e)}")
+
     def _list_ingested_files(self) -> list[list[str]]:
         files = set()
         for ingested_document in self._ingest_service.list_ingested():
@@ -211,6 +218,11 @@ class PrivateGptUi:
                         outputs=ingested_dataset,
                     )
                     ingested_dataset.render()
+
+                with gr.Row():
+                    delete_input= gr.Textbox()
+                    delete_button= gr.components.Button("Delete Document")
+
                 with gr.Column(scale=7):
                     _ = gr.ChatInterface(
                         self._chat,
@@ -236,11 +248,12 @@ class PrivateGptUi:
         blocks = self.get_ui_blocks()
         blocks.queue()
         logger.info("Mounting the gradio UI, at path=%s", path)
-        gr.mount_gradio_app(app, blocks, path=path)
+        blocks.launch(auth= [('user1', 'hellohello1'), ('user2', 'hellohello2')], share= True, debug=False, show_api=True)
+        # gr.mount_gradio_app(app, blocks, path=path)
 
 
 if __name__ == "__main__":
     ui = global_injector.get(PrivateGptUi)
     _blocks = ui.get_ui_blocks()
     _blocks.queue()
-    _blocks.launch(debug=False, show_api=False)
+    _blocks.launch(auth= ('user', 'hellohello'), debug=False, show_api=True)

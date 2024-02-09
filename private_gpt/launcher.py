@@ -1,8 +1,7 @@
 """FastAPI app creation, logger configuration and main API routes."""
 import logging
 from typing import Any
-
-from fastapi import Depends, FastAPI, Request
+from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 from injector import Injector
